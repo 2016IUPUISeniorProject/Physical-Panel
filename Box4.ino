@@ -1,18 +1,20 @@
 // This #include statement was automatically added by the Particle IDE.
 #include "Neopix.h"
+#include "Neopix.cpp"
 
 // This #include statement was automatically added by the Particle IDE.
-#include "SparkFunLSM9DS1/SparkFunLSM9DS1.h"
+//#include "SparkFunLSM9DS1/SparkFunLSM9DS1.h"
+#include "SparkFunLSM9DS1.h"
 
 // This #include statement was automatically added by the Particle IDE.
-#include "SparkFunLSM9DS1/SparkFunLSM9DS1.h"
+//#include "SparkFunLSM9DS1/SparkFunLSM9DS1.h"
 
 // This #include statement was automatically added by the Particle IDE.
 #include "Neopix.h"
 #define PIXEL_COUNT 16
 #define PIXEL_PIN WKP
 #define PIXEL_TYPE WS2812
-//-------------*/                             
+//-------------*/
 #include <vector>
 #include <limits.h>
 #include <string>
@@ -39,7 +41,7 @@ int GREENBUTTON = A0;
 int YELLOWBUTTON = A1;
 
 /////ROT. ENCODER//////////
-volatile bool A_set = false;    //code may POSSIBLY optimize better without 
+volatile bool A_set = false;    //code may POSSIBLY optimize better without
 volatile bool B_set = false;    //volatile, may be worth experimenting if latency becomes an issue
 volatile int encoderPos = 0;
 volatile int ENCODERLEDSTATUS=0; //to replace encoderPos
@@ -80,7 +82,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
 void setup() {
 
  //open serial connection
-  Serial.begin(115200); //begin serial connection at 9600 bps  
+  Serial.begin(115200); //begin serial connection at 9600 bps
   ///initiate LED ring
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -89,19 +91,19 @@ void setup() {
         strip.clear();
         strip.setPixelColor(encoderPos, 0, 255, 255);
         strip.show();
-  
+
   attachInterrupt(ENCODERA, doEncoderA, CHANGE);
-  attachInterrupt(ENCODERB, doEncoderB, CHANGE);  
-    
+  attachInterrupt(ENCODERB, doEncoderB, CHANGE);
+
   pinMode(REDLED, OUTPUT);
   pinMode(BLUELED, OUTPUT);
   pinMode(GREENLED, OUTPUT);
   pinMode(YELLOWLED, OUTPUT);
   pinMode(RINGOUTPUT, OUTPUT);
-  
+
   pinMode(ENCODERA,INPUT_PULLUP);
   pinMode(ENCODERB,INPUT_PULLUP);
-  
+
   pinMode(REDBUTTON,INPUT_PULLUP);
   pinMode(BLUEBUTTON,INPUT_PULLUP);
   pinMode(GREENBUTTON,INPUT_PULLUP);
@@ -135,7 +137,7 @@ BUTTONPRESSED=((REDBUTTONSTATUS==LOW)||(BLUEBUTTONSTATUS==LOW)||(GREENBUTTONSTAT
 if((BUTTONPRESSED==1)&&(WAITFORRELEASE==0))          //button pressed for first time,so write values and wait for release flag to go high
     {
                WAITFORRELEASE=1;
-               UPDATELIGHTS();  
+               UPDATELIGHTS();
                COMMUNICATE();                        //update lights upon pressing down
     }
 
@@ -179,7 +181,7 @@ void COMMUNICATE() //OCCURS UPON SERIAL DATA RECEIVED OR INPUTS ON BOX CHANGED
      Serial.read();
      digitalWrite(REDLED,REDLEDSTATUS);
      }
-     
+
     }
         if(Serial.peek()=='b')
       {
@@ -210,7 +212,7 @@ void COMMUNICATE() //OCCURS UPON SERIAL DATA RECEIVED OR INPUTS ON BOX CHANGED
      digitalWrite(GREENLED,GREENLEDSTATUS);
      }
     }
-      
+
     }
         if(Serial.peek()=='y')
     {
@@ -220,15 +222,15 @@ void COMMUNICATE() //OCCURS UPON SERIAL DATA RECEIVED OR INPUTS ON BOX CHANGED
      Serial.read();
      digitalWrite(YELLOWLED,YELLOWLEDSTATUS);
      }
-     
+
      if(Serial.peek()=='0')
      {YELLOWLEDSTATUS=0;
      Serial.read();
      digitalWrite(YELLOWLED,YELLOWLEDSTATUS);
      }
-     
+
     }
-           
+
             if(Serial.peek()=='e')
     {
         Serial.read();
@@ -238,19 +240,19 @@ void COMMUNICATE() //OCCURS UPON SERIAL DATA RECEIVED OR INPUTS ON BOX CHANGED
         strip.setPixelColor(ENCODERLEDSTATUS, 0, 255, 255);
         strip.show();
     }
-    
+
     /*
          if(Serial.peek()=='t'){
      Serial.read();
-     
+
      strip.clear();
         strip.setPixelColor(5, 0, 255, 255);
         strip.show();
-        
+
      }
-    
-    
-    
+
+
+
              if(Serial.peek()=='k'){
      Serial.read();
      ENCODERSTRING=Serial.readStringUntil('X');
@@ -258,47 +260,47 @@ void COMMUNICATE() //OCCURS UPON SERIAL DATA RECEIVED OR INPUTS ON BOX CHANGED
      strip.clear();
         strip.setPixelColor(13, 0, 255, 255);
         strip.show();
-        
+
      }
      */
 //send info to virtual reality if flag was raised by real inputs, lower flags
 //////////////////////////////////////////////
 
-       
+
        if(REDBUTTONFLAG)                               // WHAT DO WE DO IF THERE IS INCOMING AND OUTGOING CHANGE???
          {
              Serial.printf("r%dX",REDLEDSTATUS);
                //Serial.print("r");
           REDBUTTONFLAG=0;
          }
-        if(BLUEBUTTONFLAG)                              
+        if(BLUEBUTTONFLAG)
          {
           Serial.printf("b%dX",BLUELEDSTATUS);
           BLUEBUTTONFLAG=0;
          }
-      if(GREENBUTTONFLAG)                              
+      if(GREENBUTTONFLAG)
          {
           Serial.printf("g%dX",GREENLEDSTATUS);
           GREENBUTTONFLAG=0;
          }
-      if(YELLOWBUTTONFLAG)                              
+      if(YELLOWBUTTONFLAG)
          {
           Serial.printf("y%dX",YELLOWLEDSTATUS);
           YELLOWBUTTONFLAG=0;
-         } 
-         
+         }
+
          if(ENCODERFLAG==1)
          {
              Serial.printf("e%dX",ENCODERLEDSTATUS);
              ENCODERFLAG=0;
          }
-         
-         
+
+
 }//end of communicate
 
 void UPDATELIGHTS()
 
-{       
+{
         //UPDATE LEDS
             if(REDBUTTONSTATUS==LOW)
         {
@@ -324,16 +326,16 @@ void UPDATELIGHTS()
             YELLOWLEDSTATUS=!YELLOWLEDSTATUS;
             YELLOWBUTTONFLAG=1;
         }
-        
-        
+
+
                 if(ENCODERFLAG==1)
         {
             strip.clear();
              strip.setPixelColor(ENCODERLEDSTATUS, 0, 255, 255);
              strip.show();
-        }   
-        
-        
+        }
+
+
 }
 
 
@@ -344,7 +346,7 @@ void CHECKENCODERCHANGED(){
         ENCODERFLAG=1;
         UPDATELIGHTS();
         COMMUNICATE();
-        
+
     }
 }
 
@@ -352,12 +354,12 @@ void doEncoderA(){
   if( digitalRead(ENCODERA) != A_set ) {  // debounce once more
     A_set = !A_set;
     // adjust counter + if A leads B
-    if ( A_set && !B_set ) 
+    if ( A_set && !B_set )
     {
         if(ENCODERLEDSTATUS==15)
         {ENCODERLEDSTATUS=0;}else
       ENCODERLEDSTATUS += 1;
-    
+
     }
   }
 }
