@@ -17,7 +17,19 @@
 #include <limits.h>
 #include <string>
 
-//SYSTEM_MODE(MANUAL);
+//SYSTEM_MODE(MANUAL);  //set this if using websockets (requires changing)
+
+////////////////////////////////////////////////////////////////
+//function declarations... for use if compiling on a machine (compiles as .cpp not .ino on machine)
+void COMMUNICATE();
+void UPDATELIGHTS();
+void UPDATEENCODERLIGHTS();
+void CHECKENCODERCHANGED();
+void doEncoderA();
+// Interrupt on B changing state, same as A above
+void doEncoderB();
+//////////////////////////////////////////////////////////////////
+
 
 int REDLED = D2;
 int BLUELED = D3;
@@ -109,8 +121,8 @@ void setup() {
         strip.setPixelColor(encoderPos, 0, 255, 255);
         strip.show();
   
-  attachInterrupt(ENCODERA, doEncoderA, CHANGE);
-  attachInterrupt(ENCODERB, doEncoderB, CHANGE);  
+  //attachInterrupt(ENCODERA, doEncoderA, CHANGE);
+  //attachInterrupt(ENCODERB, doEncoderB, CHANGE);  
     
   pinMode(REDLED, OUTPUT);
   pinMode(BLUELED, OUTPUT);
@@ -137,7 +149,16 @@ REDBUTTONSTATUS=digitalRead(REDBUTTON);
 BLUEBUTTONSTATUS=digitalRead(BLUEBUTTON);
 GREENBUTTONSTATUS=digitalRead(GREENBUTTON);
 YELLOWBUTTONSTATUS=digitalRead(YELLOWBUTTON);
+
+  if(digitalRead(ENCODERA)!=PREVIOUS_ENCODERA_STATUS)
+  {PREVIOUS_ENCODERA_STATUS=digitalRead(ENCODERA);doEncoderA();}
+  
+  if(digitalRead(ENCODERB)!=PREVIOUS_ENCODERB_STATUS)
+  {PREVIOUS_ENCODERB_STATUS=digitalRead(ENCODERB);doEncoderB();}
+
 CHECKENCODERCHANGED();
+
+
 //POLL OUTPUTS AT BEGINNING OF LOOP
 REDLEDSTATUS=digitalRead(REDLED);
 BLUELEDSTATUS=digitalRead(BLUELED);
